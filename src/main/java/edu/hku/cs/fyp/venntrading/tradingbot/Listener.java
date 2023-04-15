@@ -16,12 +16,8 @@ import org.springframework.stereotype.Service;
 import org.ta4j.core.Bar;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseBarSeries;
-import org.ta4j.core.indicators.EMAIndicator;
-import org.ta4j.core.indicators.MACDIndicator;
-import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -83,7 +79,6 @@ public class Listener {
             if (i != size - 1)
                 series.addBar(closeTime, openPrice, highPrice, lowPrice, closePrice, volume);
             else {
-                System.out.println(closeTimeMillis);
                 timestamps.put(name, closeTimeMillis); // get latest timestamp
                 lastMsgs.put(name, new KlineData(
                         openTimeMillis,
@@ -108,7 +103,6 @@ public class Listener {
     public void addListener(String symbol, String interval, CountDownLatch counter) {
         WebsocketStreamClientImpl wsStreamClient = new WebsocketStreamClientImpl(); // defaults to live exchange unless stated.
         int streamID = wsStreamClient.klineStream(symbol, interval, (event) -> {
-            System.out.println(event);
             KlineWSMapper eventObject = null;
             try {
                 eventObject = objectMapper.readValue(event, KlineWSMapper.class);

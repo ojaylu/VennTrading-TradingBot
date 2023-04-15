@@ -1,4 +1,4 @@
-package edu.hku.cs.fyp.venntrading.tradingbot.responseMapper;
+package edu.hku.cs.fyp.venntrading.tradingbot.requestMapper;
 
 import java.util.List;
 

@@ -1,20 +1,15 @@
 package edu.hku.cs.fyp.venntrading.tradingbot;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executor;
 
 @SpringBootApplication
 @EnableAsync
@@ -27,7 +22,7 @@ public class TradingBotApplication implements AsyncConfigurer, CommandLineRunner
 	TradingBotMapper tradingBotMapper;
 
 	private final String[] SYMBOLS = {"BTCUSDT"};
-	private final String[] INTERVALS = {"1s"};
+	private final String[] INTERVALS = {"1s", "1m", "1w", "1M"};
 
 	@Override
 	public void run(String...args) throws JsonProcessingException, InterruptedException {
