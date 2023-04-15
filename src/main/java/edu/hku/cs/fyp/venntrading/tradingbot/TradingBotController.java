@@ -33,7 +33,7 @@ public class TradingBotController {
 
     @GetMapping("/hi")
     public String hi() {
-        return "carrick is gay";
+        return "hello world";
     }
 
     @GetMapping("/trial")
