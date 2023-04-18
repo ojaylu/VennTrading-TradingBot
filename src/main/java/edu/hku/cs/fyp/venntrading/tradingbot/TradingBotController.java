@@ -1,6 +1,7 @@
 package edu.hku.cs.fyp.venntrading.tradingbot;
 
 import edu.hku.cs.fyp.venntrading.tradingbot.requestMapper.BacktestingMapper;
+import edu.hku.cs.fyp.venntrading.tradingbot.requestMapper.MetricsMapper;
 import edu.hku.cs.fyp.venntrading.tradingbot.requestMapper.RemoverMapper;
 import edu.hku.cs.fyp.venntrading.tradingbot.requestMapper.SpawnerMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,7 @@ public class TradingBotController {
     @PostMapping("/trading-bot/{id}")
     public Map<String, String> spawnTradingBot(@PathVariable String id, @RequestBody SpawnerMapper body) {
         String streamName = Utils.getStreamName(body.symbol(), body.interval());
-        TradingBot bot = new TradingBot(body.key(), body.secret(), id, listener.getBar(streamName), body.strategy());
+        TradingBot bot = new TradingBot(body.key(), body.secret(), id, listener.getBar(streamName), body.strategy(), body.quantity(), body.paper());
         tradingBotMapper.addBot(streamName, id, bot);
         Map<String, String> response = new HashMap<>();
         System.out.println("spawned bot: " + id);
@@ -70,12 +71,22 @@ public class TradingBotController {
         return response;
     }
 
+    @GetMapping("/trading-bot/{id}")
+    public Map<String, Double> getTradingBotMetrics(@PathVariable String id, @RequestBody MetricsMapper body) {
+        String streamName = Utils.getStreamName(body.symbol(), body.interval());
+        TradingBot bot = tradingBotMapper.getBot(streamName, id);
+        return bot.metrics();
+    }
+
     @PostMapping("/backtesting")
     public HashMap<String, Double> backtesting(@RequestBody BacktestingMapper body) {
         String streamName = Utils.getStreamName(body.symbol(), body.interval());
         BarSeries series = listener.getBar(streamName);
         // make a copy to avoid situation where series changes in the middle of the analysis
-        BarSeries seriesCopy = series.getSubSeries(series.getBeginIndex(), series.getEndIndex());
+        BarSeries seriesCopy;
+        synchronized(series) {
+            seriesCopy = series.getSubSeries(series.getBeginIndex(), series.getEndIndex());
+        }
         BarSeriesManager seriesManager = new BarSeriesManager(seriesCopy);
         Strategy strategy = StrategyBuilder.strategyBuilder(body.strategy(), seriesCopy);
         TradingRecord tradingRecord = seriesManager.run(strategy, Trade.TradeType.BUY, DecimalNum.valueOf(body.quantity()));

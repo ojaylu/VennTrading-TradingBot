@@ -26,6 +26,10 @@ public class TradingBotMapper {
         map.get(streamName).remove(id);
     }
 
+    public TradingBot getBot(String streamName, String id) {
+        return map.get(streamName).remove(id);
+    }
+
     public ConcurrentHashMap<String, TradingBot>  getBots(String streamName) {
         return map.get(streamName);
     }

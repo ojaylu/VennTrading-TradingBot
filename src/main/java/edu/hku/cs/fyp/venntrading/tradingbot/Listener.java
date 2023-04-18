@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
-import org.ta4j.core.Bar;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseBarSeries;
 
@@ -137,16 +136,16 @@ public class Listener {
 
     public void setBar(String name, KlineData data) {
         BarSeries series = bars.get(name);
-        Bar lastBar = series.getLastBar();
-        ZonedDateTime endTime = lastBar.getEndTime();
-        series.addBar(
-                Utils.longToZonedDateTime(data.closeTime()),
-                data.openPrice(),
-                data.highPrice(),
-                data.lowPrice(),
-                data.closePrice(),
-                data.volume()
-        );
+        synchronized(series) {
+            series.addBar(
+                    Utils.longToZonedDateTime(data.closeTime()),
+                    data.openPrice(),
+                    data.highPrice(),
+                    data.lowPrice(),
+                    data.closePrice(),
+                    data.volume()
+            );
+        }
     }
 
     public Long getTimestamp(String name) {
