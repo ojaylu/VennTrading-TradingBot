@@ -72,10 +72,21 @@ public class TradingBotController {
     }
 
     @GetMapping("/trading-bot/{id}")
-    public Map<String, Double> getTradingBotMetrics(@PathVariable String id, @RequestBody MetricsMapper body) {
+    public Map<String, Object> getTradingBotMetrics(@PathVariable String id, @RequestBody MetricsMapper body) {
         String streamName = Utils.getStreamName(body.symbol(), body.interval());
-        TradingBot bot = tradingBotMapper.getBot(streamName, id);
-        return bot.metrics();
+        System.out.println(streamName);
+        Map<String, Object> response = new HashMap<>();
+        if(tradingBotMapper.hasBot(streamName, id)) {
+            response.put("status", "has bot");
+            System.out.println("has bot");
+            TradingBot bot = tradingBotMapper.getBot(streamName, id);
+            response.put("metrics", bot.metrics());
+            return response;
+        } else {
+            response.put("status", "no bot");
+            System.out.println("no bot");
+            return response;
+        }
     }
 
     @PostMapping("/backtesting")

@@ -22,7 +22,7 @@ public class TradingBotApplication implements AsyncConfigurer, CommandLineRunner
 	TradingBotMapper tradingBotMapper;
 
 	private final String[] SYMBOLS = {"BTCUSDT"};
-	private final String[] INTERVALS = {"1s", "1m", "1w", "1M"};
+	private final String[] INTERVALS = {"1s", "1d", "1m", "1w", "1M"};
 
 	@Override
 	public void run(String...args) throws JsonProcessingException, InterruptedException {

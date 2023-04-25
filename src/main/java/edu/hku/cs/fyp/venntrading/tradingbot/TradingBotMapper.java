@@ -27,7 +27,11 @@ public class TradingBotMapper {
     }
 
     public TradingBot getBot(String streamName, String id) {
-        return map.get(streamName).remove(id);
+        return map.get(streamName).get(id);
+    }
+
+    public boolean hasBot(String streamName, String id) {
+        return map.get(streamName).containsKey(id);
     }
 
     public ConcurrentHashMap<String, TradingBot>  getBots(String streamName) {
